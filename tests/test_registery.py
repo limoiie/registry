@@ -1,6 +1,7 @@
 import unittest
 
-from src.registry import Registry, SubclassRegistry
+from src.registry.subclass_registry import SubclassRegistry
+from src.registry.registry import Registry
 
 
 class TestRegistry(unittest.TestCase):

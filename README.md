@@ -5,11 +5,11 @@ A base for these classes that propose to be used as a registry.
 ## Usages
 
 ```python
-
+import src.registry.subclass_registry
 from src import registry
 
 
-class Tool(registry.SubclassRegistry):
+class Tool(src.registry.subclass_registry.SubclassRegistry):
     def class_name(self):
         return self.__class__.__name__
 
