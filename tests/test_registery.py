@@ -8,12 +8,12 @@ class TestRegistry(unittest.TestCase):
     class FakeTool(Registry):
         pass
 
-    @FakeTool.register(return_class=True, name='one', limit=9)
+    @FakeTool.register(return_annotated=True, name='one', limit=9)
     class ToolOne:
         def name(self):
             return self.__class__.__name__
 
-    @FakeTool.register(return_class=False, default_return=None, name='two')
+    @FakeTool.register(return_annotated=False, default_return=None, name='two')
     class ToolTwo:
         def name(self):
             return self.__class__.__name__
