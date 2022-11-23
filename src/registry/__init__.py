@@ -1,7 +1,12 @@
-from importlib.metadata import version, PackageNotFoundError
+__all__ = ['__version__', 'Registry', 'SubclassRegistry']
+
 from typing import Dict, Type, Optional, Any, TypeVar
 
-__all__ = ['__version__', 'Registry', 'SubclassRegistry']
+try:
+    from importlib.metadata import version, PackageNotFoundError
+except ModuleNotFoundError:
+    # noinspection PyUnresolvedReferences
+    from importlib_metadata import version, PackageNotFoundError
 
 try:
     __version__ = version("registry")
