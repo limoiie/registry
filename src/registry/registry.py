@@ -48,10 +48,11 @@ class Registry:
         return annotated in cls.center()
 
     @classmethod
-    def query(cls, **query):
+    def query(cls, *, fn=None, **query):
         """
         Find the registered class/method by partial meta info `query`.
 
+        :param fn: Match function that accepts meta, return if matched or not.
         :param query: The partial meta info.
         :return: the matched registered class/method, or `None` if no such one.
 
@@ -62,10 +63,15 @@ class Registry:
         >>> @Tool.register(name='Hammer', place='toolbox', year=2002)
         ... class HammerTool: ...
         >>> assert Tool.query(name='Hammer', place='toolbox') is HammerTool
+
+        Or, find by callback function:
+
+        >>> assert Tool.query(fn=lambda m: m['name'] == 'Hammer') is HammerTool
         """
-        center = cls.center()
-        for registered, registered_meta in center.items():
-            if registered_meta.items() >= query.items():
+        fn = fn or (lambda meta: query.items() <= meta.items())
+
+        for registered, registered_meta in cls.center().items():
+            if fn(registered_meta):
                 return registered
 
         return None
