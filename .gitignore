@@ -1,0 +1,10 @@
+__pycache__/
+develop-eggs/
+dist/
+*.py[cod]
+*$py.class
+
+.DS_Store
+
+.idea/
+.vscode/
