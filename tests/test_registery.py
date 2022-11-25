@@ -1,10 +1,8 @@
-import unittest
-
-from src.registry.subclass_registry import SubclassRegistry
-from src.registry.registry import Registry
+from registry.subclass_registry import SubclassRegistry
+from registry.registry import Registry
 
 
-class TestRegistry(unittest.TestCase):
+class TestRegistry:
     class FakeTool(Registry):
         pass
 
@@ -34,7 +32,7 @@ class TestRegistry(unittest.TestCase):
                dict(name='one', limit=9)
 
 
-class TestSubclassRegistry(unittest.TestCase):
+class TestSubclassRegistry:
     class FakeTool(SubclassRegistry):
         @classmethod
         def name(cls):
