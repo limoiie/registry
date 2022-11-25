@@ -26,9 +26,9 @@ class Registry:
         Examples:
         --------
 
-        >>> class Tool(Registry): ...
-        >>> @Tool.register(return_annotated=False)
-        ... class SubTool: ...
+        >>> class Toolbox(Registry): ...
+        >>> @Toolbox.register(return_annotated=False)
+        ... class Hammer: ...
         """
 
         def do_register(subclass: Hashable):
@@ -59,14 +59,14 @@ class Registry:
         Examples
         --------
 
-        >>> class Tool(Registry): ...
-        >>> @Tool.register(name='Hammer', place='toolbox', year=2002)
-        ... class HammerTool: ...
-        >>> assert Tool.query(name='Hammer', place='toolbox') is HammerTool
+        >>> class Toolbox(Registry): ...
+        >>> @Toolbox.register(name='Hammer', place='toolbox', year=2002)
+        ... class Hammer: ...
+        >>> assert Toolbox.query(name='Hammer', place='toolbox') is Hammer
 
         Or, find by callback function:
 
-        >>> assert Tool.query(fn=lambda m: m['name'] == 'Hammer') is HammerTool
+        >>> assert Toolbox.query(fn=lambda m: m['name'] == 'Hammer') is Hammer
         """
         fn = fn or (lambda meta: query.items() <= meta.items())
 
