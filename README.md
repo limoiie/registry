@@ -1,5 +1,8 @@
 # Registry
 
+[![Registry unit tests](https://github.com/limoiie/registry/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/limoiie/registry/actions?branch=master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2f37153cc54445b1a20b59c8d7ae6d07)](https://www.codacy.com/gh/limoiie/registry/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=limoiie/registry&amp;utm_campaign=Badge_Grade)
+
 A base for these classes that propose to be used as a registry.
 
 There is a common need when one's framework deals with many custom classes at
