@@ -1,10 +1,10 @@
-from typing import Any, Dict, TypeVar
+from typing import Dict, TypeVar
 
 try:
     from typing import Protocol
 
 except ImportError:
-    Protocol = Any
+    Protocol = object
 
 
 class DataclassProtocol(Protocol):
