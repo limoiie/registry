@@ -1,5 +1,7 @@
-from registry.subclass_registry import SubclassRegistry
+import dataclasses
+
 from registry.registry import Registry
+from registry.subclass_registry import SubclassRegistry
 
 
 class TestRegistry:
@@ -30,6 +32,46 @@ class TestRegistry:
         ToolOne = TestRegistry.FakeTool.query(name='one')
         assert TestRegistry.FakeTool.meta_of(ToolOne) == \
                dict(name='one', limit=9)
+
+
+class TestRegistryWithMetaType:
+    @dataclasses.dataclass
+    class Meta:
+        name: str = ''
+        limit: int = 0
+
+    class FakeTool(Registry[Meta]):
+        pass
+
+    @FakeTool.register(return_annotated=True, name='one', limit=9)
+    class ToolOne:
+        def name(self):
+            return self.__class__.__name__
+
+    @FakeTool.register(return_annotated=False, default_return=None, name='two')
+    class ToolTwo:
+        def name(self):
+            return self.__class__.__name__
+
+    def test_query(self):
+        FakeTool = TestRegistryWithMetaType.FakeTool
+
+        ToolOne = FakeTool.query(name='one')
+        ToolTwo = FakeTool.query(fn=lambda m: m.name == 'two')
+
+        assert ToolOne is TestRegistryWithMetaType.ToolOne
+        assert TestRegistryWithMetaType.ToolTwo is None
+
+        assert ToolOne().name() == 'ToolOne'
+        assert ToolTwo().name() == 'ToolTwo'
+
+    def test_meta(self):
+        FakeTool = TestRegistryWithMetaType.FakeTool
+
+        ToolOne = FakeTool.query(name='one')
+        meta = FakeTool.meta_of(ToolOne)
+        expected_meta = TestRegistryWithMetaType.Meta(name='one', limit=9)
+        assert meta == expected_meta
 
 
 class TestSubclassRegistry:
