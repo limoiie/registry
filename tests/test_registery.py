@@ -58,3 +58,41 @@ class TestSubclassRegistry:
         ToolOne = TestSubclassRegistry.FakeTool.query(name='one')
         assert TestSubclassRegistry.FakeTool.meta_of(ToolOne) == \
                dict(name='one', limit=9)
+
+
+class TestMultiLvlSubclassRegistry:
+    class FakeTool(SubclassRegistry):
+        @classmethod
+        def name(cls):
+            return cls.__name__
+
+    class ToolOne(FakeTool, name='one', limit=9):
+        pass
+
+    class ToolTwo(FakeTool, name='two'):
+        pass
+
+    class ToolThree(ToolOne, name='three', nested=True):
+        pass
+
+    class ToolFour(ToolThree, name='four', nested=True):
+        pass
+
+    def test_query(self):
+        ToolOne = TestMultiLvlSubclassRegistry.FakeTool.query(name='one')
+        ToolTwo = TestMultiLvlSubclassRegistry.FakeTool.query(name='two')
+        ToolThree = TestMultiLvlSubclassRegistry.FakeTool.query(name='three')
+        ToolFour = TestMultiLvlSubclassRegistry.FakeTool.query(name='four')
+
+        assert ToolOne is TestMultiLvlSubclassRegistry.ToolOne
+        assert ToolTwo is TestMultiLvlSubclassRegistry.ToolTwo
+        assert ToolThree is TestMultiLvlSubclassRegistry.ToolThree
+        assert ToolFour is TestMultiLvlSubclassRegistry.ToolFour
+
+        assert ToolOne().name() == 'ToolOne'
+        assert ToolTwo().name() == 'ToolTwo'
+        assert ToolThree().name() == 'ToolThree'
+        assert ToolFour().name() == 'ToolFour'
+
+        meta = TestMultiLvlSubclassRegistry.FakeTool.meta_of(ToolFour)
+        assert meta['nested'] == True

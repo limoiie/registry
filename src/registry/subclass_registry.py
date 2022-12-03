@@ -18,8 +18,8 @@ class SubclassRegistry:
     _center: Optional[Dict[Type[T], Dict]] = None
 
     def __init_subclass__(cls, **meta):
-        base_cls = SubclassRegistry._base_of(cls)
-        if base_cls is not SubclassRegistry:
+        base_cls = cls._base_that_directly_derive_registry()
+        if base_cls:
             base_cls.center()[cls] = meta
 
     @classmethod
@@ -65,10 +65,13 @@ class SubclassRegistry:
 
         return cls._center
 
-    @staticmethod
-    def _base_of(cls):
+    @classmethod
+    def _base_that_directly_derive_registry(cls):
         for parent in cls.__bases__:
+            if parent == SubclassRegistry:
+                return None
+
             if issubclass(parent, SubclassRegistry):
-                return parent
+                return parent._base_that_directly_derive_registry() or parent
 
         return None
