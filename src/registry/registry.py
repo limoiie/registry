@@ -31,9 +31,9 @@ class Registry:
         ... class Hammer: ...
         """
 
-        def do_register(subclass: Hashable):
-            cls.center()[subclass] = meta
-            return subclass if return_annotated else default_return
+        def do_register(annotated: Hashable):
+            cls.center()[annotated] = meta
+            return annotated if return_annotated else default_return
 
         return do_register
 
