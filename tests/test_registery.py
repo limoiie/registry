@@ -48,7 +48,7 @@ class TestRegistryWithMetaType:
         def name(self):
             return self.__class__.__name__
 
-    @FakeTool.register(return_annotated=False, default_return=None, name='two')
+    @FakeTool.register(return_annotated=False, name='two')
     class ToolTwo:
         def name(self):
             return self.__class__.__name__
@@ -100,6 +100,44 @@ class TestSubclassRegistry:
         ToolOne = TestSubclassRegistry.FakeTool.query(name='one')
         assert TestSubclassRegistry.FakeTool.meta_of(ToolOne) == \
                dict(name='one', limit=9)
+
+
+class TestSubclassRegistryWithMetaType:
+    @dataclasses.dataclass
+    class Meta:
+        name: str = ''
+        limit: int = 0
+
+    class FakeTool(SubclassRegistry[Meta]):
+        @classmethod
+        def name(cls):
+            return cls.__name__
+
+    class ToolOne(FakeTool, name='one', limit=9):
+        pass
+
+    class ToolTwo(FakeTool, name='two'):
+        pass
+
+    def test_query(self):
+        FakeTool = TestSubclassRegistryWithMetaType.FakeTool
+
+        ToolOne = FakeTool.query(name='one')
+        ToolTwo = FakeTool.query(fn=lambda m: m.name == 'two')
+
+        assert ToolOne is TestSubclassRegistryWithMetaType.ToolOne
+        assert ToolTwo is TestSubclassRegistryWithMetaType.ToolTwo
+
+        assert ToolOne().name() == 'ToolOne'
+        assert ToolTwo().name() == 'ToolTwo'
+
+    def test_meta(self):
+        FakeTool = TestSubclassRegistryWithMetaType.FakeTool
+
+        ToolTwo = FakeTool.query(name='two')
+        meta = FakeTool.meta_of(ToolTwo)
+        expected_meta = TestSubclassRegistryWithMetaType.Meta(name='two')
+        assert meta == expected_meta
 
 
 class TestMultiLvlSubclassRegistry:
