@@ -85,12 +85,12 @@ class SubclassRegistry(Generic[MT]):
         return args[0] if args else dict
 
     @classmethod
-    def _generic_args(cls) -> Tuple[type] or None:
+    def _generic_args(cls) -> Optional[Tuple[type]]:
         orig_base = cls._orig_base_that_derive_register()
         return orig_base.__args__ if orig_base else None
 
     @classmethod
-    def _orig_base_that_derive_register(cls) -> _GenericAlias or None:
+    def _orig_base_that_derive_register(cls) -> Optional[_GenericAlias]:
         orig_bases = getattr(cls, '__orig_bases__', None)
         if not orig_bases:
             return
