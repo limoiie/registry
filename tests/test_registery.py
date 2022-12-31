@@ -1,4 +1,5 @@
 import dataclasses
+import random
 
 from registry.registry import Registry
 from registry.subclass_registry import SubclassRegistry
@@ -32,6 +33,39 @@ class TestRegistry:
         ToolOne = TestRegistry.FakeTool.query(name='one')
         assert TestRegistry.FakeTool.meta_of(ToolOne) == \
                dict(name='one', limit=9)
+
+    def test_override_make_meta(self):
+        fake_transient_arg = random.randint(10, 20)
+        fake_increase = random.randint(20, 30)
+
+        class ToolOverrideMakeMeta(Registry):
+            @classmethod
+            def make_meta(cls, transient_arg: int):
+                return {
+                    'arg': transient_arg + fake_increase
+                }
+
+        @ToolOverrideMakeMeta.register(transient_arg=fake_transient_arg)
+        class SubTool:
+            pass
+
+        meta = ToolOverrideMakeMeta.meta_of(SubTool)
+        assert meta['arg'] == fake_transient_arg + fake_increase
+
+    def test_override_check_meta(self):
+        fake_default_meta = dict(name='anonymous')
+
+        class ToolOverrideMakeMeta(Registry):
+            @classmethod
+            def check_meta(cls, meta: dict):
+                return meta or fake_default_meta
+
+        @ToolOverrideMakeMeta.register()
+        class SubTool:
+            pass
+
+        registered_meta = ToolOverrideMakeMeta.meta_of(SubTool)
+        assert registered_meta is fake_default_meta
 
 
 class TestRegistryWithMetaType:
@@ -107,6 +141,37 @@ class TestSubclassRegistry:
         # query meta by DerivedClass.meta
         meta = ToolOne.meta()
         assert expected_meta == meta
+
+    def test_override_make_meta(self):
+        fake_transient_arg = random.randint(10, 20)
+        fake_increase = random.randint(20, 30)
+
+        class ToolOverrideMakeMeta(SubclassRegistry):
+            @classmethod
+            def make_meta(cls, transient_arg: int):
+                return {
+                    'arg': transient_arg + fake_increase
+                }
+
+        class SubTool(ToolOverrideMakeMeta, transient_arg=fake_transient_arg):
+            pass
+
+        meta = ToolOverrideMakeMeta.meta_of(SubTool)
+        assert meta['arg'] == fake_transient_arg + fake_increase
+
+    def test_override_check_meta(self):
+        fake_default_meta = dict(name='anonymous')
+
+        class ToolOverrideMakeMeta(SubclassRegistry):
+            @classmethod
+            def check_meta(cls, meta: dict):
+                return meta or fake_default_meta
+
+        class SubTool(ToolOverrideMakeMeta):
+            pass
+
+        registered_meta = ToolOverrideMakeMeta.meta_of(SubTool)
+        assert registered_meta is fake_default_meta
 
 
 class TestSubclassRegistryWithMetaType:
