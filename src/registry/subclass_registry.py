@@ -23,8 +23,8 @@ class SubclassRegistry(Generic[MT]):
     def __init_subclass__(cls, **meta):
         base_cls = cls._base_that_directly_derive_registry()
         if base_cls:
-            meta_cls = base_cls._meta_cls()
-            base_cls.center()[cls] = meta_cls(**meta)
+            meta = base_cls.make_meta(**meta)
+            base_cls.center()[cls] = cls.check_meta(meta)
 
     @classmethod
     def query(cls: Type[T], *, fn=None, **query) -> Optional[Type[T]]:
@@ -68,6 +68,15 @@ class SubclassRegistry(Generic[MT]):
     def meta(cls) -> MT:
         """Return the registered meta information of this class."""
         return cls.center()[cls]
+
+    @classmethod
+    def check_meta(cls, meta: MT):
+        return meta
+
+    @classmethod
+    def make_meta(cls, **meta) -> MT:
+        meta_cls = cls._meta_cls()
+        return meta_cls(**meta)
 
     @classmethod
     @final

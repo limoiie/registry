@@ -36,10 +36,11 @@ class Registry(Generic[MT]):
         >>> @Toolbox.register(return_annotated=False)
         ... class Hammer: ...
         """
-        meta_cls = cls._meta_cls()
+        meta = cls.make_meta(**meta)
+        meta = cls.check_meta(meta)
 
         def do_register(annotated: Hashable):
-            cls.center()[annotated] = meta_cls(**meta)
+            cls.center()[annotated] = meta
             return annotated if return_annotated else default_return
 
         return do_register
@@ -89,6 +90,15 @@ class Registry(Generic[MT]):
     def meta_of(cls, annotated) -> MT:
         """Return the registered meta information by `subclass`."""
         return cls.center()[annotated]
+
+    @classmethod
+    def check_meta(cls, meta: MT):
+        return meta
+
+    @classmethod
+    def make_meta(cls, **meta) -> MT:
+        meta_cls = cls._meta_cls()
+        return meta_cls(**meta)
 
     @classmethod
     @final
