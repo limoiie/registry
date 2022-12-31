@@ -65,6 +65,12 @@ class SubclassRegistry(Generic[MT]):
 
     @classmethod
     @final
+    def meta(cls) -> MT:
+        """Return the registered meta information of this class."""
+        return cls.center()[cls]
+
+    @classmethod
+    @final
     def center(cls) -> Dict[Type[T], MT]:
         """Return all the subclasses with bound meta info."""
         if cls._center is None:

@@ -98,8 +98,15 @@ class TestSubclassRegistry:
 
     def test_meta(self):
         ToolOne = TestSubclassRegistry.FakeTool.query(name='one')
-        assert TestSubclassRegistry.FakeTool.meta_of(ToolOne) == \
-               dict(name='one', limit=9)
+        expected_meta = dict(name='one', limit=9)
+
+        # query meta by BaseClass.meta_of
+        meta = TestSubclassRegistry.FakeTool.meta_of(ToolOne)
+        assert expected_meta == meta
+
+        # query meta by DerivedClass.meta
+        meta = ToolOne.meta()
+        assert expected_meta == meta
 
 
 class TestSubclassRegistryWithMetaType:
@@ -133,10 +140,15 @@ class TestSubclassRegistryWithMetaType:
 
     def test_meta(self):
         FakeTool = TestSubclassRegistryWithMetaType.FakeTool
-
         ToolTwo = FakeTool.query(name='two')
+
+        # query meta by BaseClass.meta_of
         meta = FakeTool.meta_of(ToolTwo)
         expected_meta = TestSubclassRegistryWithMetaType.Meta(name='two')
+        assert meta == expected_meta
+
+        # query meta by DerivedClass.meta
+        meta = ToolTwo.meta()
         assert meta == expected_meta
 
 
