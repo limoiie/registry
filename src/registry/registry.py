@@ -2,7 +2,11 @@
 from typing import Callable, Dict, Generic, Hashable, Optional, Tuple, \
     _GenericAlias
 
-from typing_extensions import final
+try:
+    from typing import final
+
+except ImportError:
+    from typing_extensions import final
 
 from registry.types import MT
 

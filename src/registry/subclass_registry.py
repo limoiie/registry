@@ -1,7 +1,11 @@
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from typing import Dict, Generic, Optional, Tuple, Type, _GenericAlias
 
-from typing_extensions import final
+try:
+    from typing import final
+
+except ImportError:
+    from typing_extensions import final
 
 from registry.types import MT, T
 
