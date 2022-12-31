@@ -1,6 +1,8 @@
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from typing import Dict, Generic, Optional, Tuple, Type, _GenericAlias
 
+from typing_extensions import final
+
 from registry.types import MT, T
 
 
@@ -56,11 +58,13 @@ class SubclassRegistry(Generic[MT]):
             return None
 
     @classmethod
+    @final
     def meta_of(cls, subclass) -> MT:
         """Return the registered meta information by `subclass`."""
         return cls.center()[subclass]
 
     @classmethod
+    @final
     def center(cls) -> Dict[Type[T], MT]:
         """Return all the subclasses with bound meta info."""
         if cls._center is None:
@@ -69,6 +73,7 @@ class SubclassRegistry(Generic[MT]):
         return cls._center
 
     @classmethod
+    @final
     def _base_that_directly_derive_registry(cls):
         for parent in cls.__bases__:
             if parent == SubclassRegistry:
@@ -80,16 +85,19 @@ class SubclassRegistry(Generic[MT]):
         return None
 
     @classmethod
+    @final
     def _meta_cls(cls) -> type:
         args = cls._generic_args()
         return args[0] if args else dict
 
     @classmethod
+    @final
     def _generic_args(cls) -> Optional[Tuple[type]]:
         orig_base = cls._orig_base_that_derive_register()
         return orig_base.__args__ if orig_base else None
 
     @classmethod
+    @final
     def _orig_base_that_derive_register(cls) -> Optional[_GenericAlias]:
         orig_bases = getattr(cls, '__orig_bases__', None)
         if not orig_bases:

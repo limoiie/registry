@@ -2,6 +2,8 @@
 from typing import Callable, Dict, Generic, Hashable, Optional, Tuple, \
     _GenericAlias
 
+from typing_extensions import final
+
 from registry.types import MT
 
 
@@ -83,11 +85,13 @@ class Registry(Generic[MT]):
         return None
 
     @classmethod
+    @final
     def meta_of(cls, annotated) -> MT:
         """Return the registered meta information by `subclass`."""
         return cls.center()[annotated]
 
     @classmethod
+    @final
     def center(cls) -> Dict[Hashable, MT]:
         """Return all the registered subclasses with bound meta info."""
         if not cls._center:
@@ -95,16 +99,19 @@ class Registry(Generic[MT]):
         return cls._center
 
     @classmethod
+    @final
     def _meta_cls(cls) -> type:
         args = cls._generic_args()
         return args[0] if args else dict
 
     @classmethod
+    @final
     def _generic_args(cls) -> Optional[Tuple[type]]:
         orig_base = cls._orig_base_that_derive_register()
         return orig_base.__args__ if orig_base else None
 
     @classmethod
+    @final
     def _orig_base_that_derive_register(cls) -> Optional[_GenericAlias]:
         orig_bases = getattr(cls, '__orig_bases__', None)
         if not orig_bases:
