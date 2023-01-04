@@ -35,22 +35,24 @@ class TestRegistry:
                dict(name='one', limit=9)
 
     def test_override_make_meta(self):
-        fake_transient_arg = random.randint(10, 20)
+        fake_arg = random.randint(10, 20)
         fake_increase = random.randint(20, 30)
 
         class ToolOverrideMakeMeta(Registry):
+            # noinspection PyMethodOverriding
             @classmethod
-            def make_meta(cls, transient_arg: int):
+            def make_meta(cls, registered, *, arg: int, name: str):
+                assert registered.__name__ == name
                 return {
-                    'arg': transient_arg + fake_increase
+                    'arg': arg + fake_increase
                 }
 
-        @ToolOverrideMakeMeta.register(transient_arg=fake_transient_arg)
+        @ToolOverrideMakeMeta.register(arg=fake_arg, name='SubTool')
         class SubTool:
             pass
 
         meta = ToolOverrideMakeMeta.meta_of(SubTool)
-        assert meta['arg'] == fake_transient_arg + fake_increase
+        assert meta['arg'] == fake_arg + fake_increase
 
     def test_override_check_meta(self):
         fake_default_meta = dict(name='anonymous')
@@ -143,21 +145,24 @@ class TestSubclassRegistry:
         assert expected_meta == meta
 
     def test_override_make_meta(self):
-        fake_transient_arg = random.randint(10, 20)
+        fake_arg = random.randint(10, 20)
         fake_increase = random.randint(20, 30)
 
         class ToolOverrideMakeMeta(SubclassRegistry):
+            # noinspection PyMethodOverriding
             @classmethod
-            def make_meta(cls, transient_arg: int):
+            def make_meta(cls, registered, *, arg: int, name: str):
+                assert registered.__name__ == name
                 return {
-                    'arg': transient_arg + fake_increase
+                    'arg': arg + fake_increase
                 }
 
-        class SubTool(ToolOverrideMakeMeta, transient_arg=fake_transient_arg):
+        class SubTool(ToolOverrideMakeMeta, arg=fake_arg,
+                      name='SubTool'):
             pass
 
         meta = ToolOverrideMakeMeta.meta_of(SubTool)
-        assert meta['arg'] == fake_transient_arg + fake_increase
+        assert meta['arg'] == fake_arg + fake_increase
 
     def test_override_check_meta(self):
         fake_default_meta = dict(name='anonymous')

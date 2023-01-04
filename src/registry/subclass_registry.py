@@ -27,7 +27,7 @@ class SubclassRegistry(Generic[MT]):
     def __init_subclass__(cls, **meta):
         base_cls = cls._base_that_directly_derive_registry()
         if base_cls:
-            meta = base_cls.make_meta(**meta)
+            meta = base_cls.make_meta(cls, **meta)
             base_cls.center()[cls] = cls.check_meta(meta)
 
     @classmethod
@@ -78,7 +78,7 @@ class SubclassRegistry(Generic[MT]):
         return meta
 
     @classmethod
-    def make_meta(cls, **meta) -> MT:
+    def make_meta(cls, __registered: type, **meta) -> MT:
         meta_cls = cls._meta_cls()
         return meta_cls(**meta)
 

@@ -24,7 +24,7 @@ class Registry(Generic[MT]):
     _center: Optional[Dict[Hashable, MT]] = None
 
     @classmethod
-    def register(cls, return_annotated=True, default_return=None, **meta):
+    def register(cls, return_annotated=True, default_return=None, **meta_dict):
         """
         Register the annotated class/method with meta information.
 
@@ -40,10 +40,11 @@ class Registry(Generic[MT]):
         >>> @Toolbox.register(return_annotated=False)
         ... class Hammer: ...
         """
-        meta = cls.make_meta(**meta)
-        meta = cls.check_meta(meta)
 
         def do_register(annotated: Hashable):
+            meta = cls.make_meta(annotated, **meta_dict)
+            meta = cls.check_meta(meta)
+
             cls.center()[annotated] = meta
             return annotated if return_annotated else default_return
 
@@ -100,7 +101,7 @@ class Registry(Generic[MT]):
         return meta
 
     @classmethod
-    def make_meta(cls, **meta) -> MT:
+    def make_meta(cls, registered, **meta) -> MT:
         meta_cls = cls._meta_cls()
         return meta_cls(**meta)
 
